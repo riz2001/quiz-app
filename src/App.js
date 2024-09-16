@@ -6,6 +6,8 @@ import MainPage from './components/MainPage';
 
 import Login from './components/Login';
 import Reg from './components/Reg';
+import Weekslist from './components/Weeklist';
+import WeekSubmissions from './components/WeekSubmissions';
 
 
 function App() {
@@ -24,6 +26,10 @@ function App() {
 
           <Route path="reg" element={<Reg/>} />
           <Route path="/" element={<Login/>} />
+
+
+          <Route path="/weeklist" element={<Weekslist />} />
+          <Route path="/submissions/:week" element={<WeekSubmissions />} />
         </Routes>
       </div>
     </Router>
