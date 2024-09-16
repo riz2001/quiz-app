@@ -34,6 +34,7 @@ const Quiz = () => {
   useEffect(() => {
     const fetchUserSubmissions = async () => {
       const token = sessionStorage.getItem('token');
+    
       try {
         const response = await axios.get(`http://localhost:5050/api/submissions`, {
           headers: { token }
