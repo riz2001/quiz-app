@@ -58,24 +58,25 @@ const Quiz = () => {
   // Handle quiz submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const userAnswers = questions.map((question, index) => ({
       questionId: question._id,
       answer: answers[index]
     }));
-
+  
     try {
+      const token = sessionStorage.getItem('token');
       const response = await axios.post('http://localhost:5050/api/submit-quiz', {
         week,
         answers: userAnswers
       }, {
-        headers: { token: sessionStorage.getItem('token') }
+        headers: { Authorization: `Bearer ${token}` }
       });
-
+  
       setScore(response.data.score);
       setResults(response.data.results);
       setSubmitted(true); // Set submitted state to true after successful submission
-
+  
       // Format results for alert
       const resultsSummary = response.data.results.map(result => {
         const question = questions.find(q => q._id === result.questionId);
@@ -86,15 +87,17 @@ const Quiz = () => {
           Status: ${result.isCorrect ? '✔️ Correct' : '❌ Incorrect'}
         `;
       }).join('\n\n');
-
+  
       // Display results in an alert box
       window.alert(`Quiz submitted successfully\n\n${resultsSummary}`);
-
+  
     } catch (error) {
+      console.error('Error submitting quiz:', error.response?.data?.message || error.message);
       setError('Error submitting quiz');
-      window.alert(`There was an error submitting the quiz. Please try again.`);
+      window.alert(`There was an error submitting the quiz: ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
+  
 
   if (loading) {
     return <div className="loading">Loading questions...</div>;
