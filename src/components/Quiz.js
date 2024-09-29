@@ -89,12 +89,14 @@ const Quiz = () => {
       }).join('\n\n');
   
       // Display results in an alert box
-      window.alert(`Quiz submitted successfully\n\n${resultsSummary}`);
+      window.alert(`Quiz submitted successfully\n\n`);
   
     } catch (error) {
+      
       console.error('Error submitting quiz:', error.response?.data?.message || error.message);
-      setError('Error submitting quiz');
-      window.alert(`There was an error submitting the quiz: ${error.response?.data?.message || 'Please try again.'}`);
+      setError('please go back');
+      window.alert(` ${error.response?.data?.message || 'Please try again.'}`);
+   
     }
   };
   

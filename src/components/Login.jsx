@@ -86,36 +86,42 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission behavior
-
+  
     axios.post("http://localhost:5050/signin", input)
-    .then(response => {
-      if (response.data.status === "incorrect password") {
-        alert("Incorrect password");
-      } else if (response.data.status === "invalid email id") {
-        alert("Invalid email ID");
-      } else {
-        let token = response.data.token;
-        let userid = response.data.userid;
+      .then(response => {
+        if (response.data.status === "incorrect password") {
+          alert("Incorrect password");
+        } else if (response.data.status === "invalid email id") {
+          alert("Invalid email ID");
+        } else if (response.data.status === "success") {
+          // Extract the token and user details from the response
+          const { token, user } = response.data;
   
-        // Store userId and token in sessionStorage
-        sessionStorage.setItem("userId", userid);
-        sessionStorage.setItem("token", token);
-        const storedUserId = sessionStorage.getItem("userId");
-        const storedToken = sessionStorage.getItem("token");
+          // Store token and user details in sessionStorage
+          sessionStorage.setItem("token", token);
+          sessionStorage.setItem("userId", user._id);
+          sessionStorage.setItem("userName", user.name);
+          sessionStorage.setItem("admissionNo", user.admissionno);
+          sessionStorage.setItem("email", user.email);
+          sessionStorage.setItem("timeSlot", user.timeSlot || "");  // If no timeSlot, store an empty string
+          sessionStorage.setItem("date", user.date || "");          // If no date, store an empty string
   
-        // Log the values to ensure they are stored correctly
-        console.log("Stored UserId:", storedUserId);
-        console.log("Stored Token:", storedToken);
+          // Log the values to ensure they are stored correctly
+          console.log("Stored UserId:", user._id);
+          console.log("Stored Token:", token);
+          console.log("Stored UserName:", user.name);
+          console.log("Stored TimeSlot:", user.timeSlot);
+          console.log("Stored Date:", user.date);
   
-        // Navigate to the main page
-        navigate("/mainpage");
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
-  
+          // Navigate to the main page
+          navigate("/user/timeslots");
+        }
+      })
+      .catch(error => {
+        console.error("Error during sign-in:", error);
+      });
   };
+  
 
   return (
     <div>

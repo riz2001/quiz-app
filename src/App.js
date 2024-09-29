@@ -8,6 +8,10 @@ import Login from './components/Login';
 import Reg from './components/Reg';
 import Weekslist from './components/Weeklist';
 import WeekSubmissions from './components/WeekSubmissions';
+import FormPage from './components/Formpage';
+import SubmissionPage from './components/Submissionpage';
+import UsersList from './components/Userlist';
+import Usertimeslots from './components/Usertimeslots';
 
 
 function App() {
@@ -30,6 +34,14 @@ function App() {
 
           <Route path="/weeklist" element={<Weekslist />} />
           <Route path="/submissions/:week" element={<WeekSubmissions />} />
+
+
+          
+          <Route path="/formpage" element={<FormPage />} />
+          <Route path="/submissionpage" element={<SubmissionPage/>} />
+
+          <Route path="/userlist" element={<UsersList />} />
+          <Route path="/user/timeslots" element={<Usertimeslots />} />
         </Routes>
       </div>
     </Router>
