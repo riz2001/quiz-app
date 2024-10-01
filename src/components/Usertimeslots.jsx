@@ -40,6 +40,7 @@ const Usertimeslots = () => {
             <tr>
               <th style={styles.th}>Time Slot</th>
               <th style={styles.th}>Date</th>
+              <th style={styles.th}>Meeting Link</th> {/* New column for Meeting Link */}
             </tr>
           </thead>
           <tbody>
@@ -47,6 +48,15 @@ const Usertimeslots = () => {
               <tr key={index}>
                 <td style={styles.td}>{slot.timeSlot}</td>
                 <td style={styles.td}>{new Date(slot.date).toLocaleDateString()}</td>
+                <td style={styles.td}>
+                  {slot.meetingLink ? (
+                    <a href={slot.meetingLink} target="_blank" rel="noopener noreferrer">
+                      {slot.meetingLink}
+                    </a>
+                  ) : (
+                    'No meeting link provided'
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
