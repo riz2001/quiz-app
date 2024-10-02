@@ -12,7 +12,8 @@ import FormPage from './components/Formpage';
 import SubmissionPage from './components/Submissionpage';
 import UsersList from './components/Userlist';
 import Usertimeslots from './components/Usertimeslots';
-import MonthlyTimeSlots from './components/MonthlyTimeSlots';
+import MonthPage from './components/MonthPage';
+
 
 
 
@@ -47,8 +48,10 @@ function App() {
           <Route path="/userlist" element={<UsersList />} />
           <Route path="/user/timeslots" element={<Usertimeslots />} />
 
+          <Route path="/monthpage" element={<MonthPage />} />
 
-          <Route path="/MonthlyTimeSlots" element={<MonthlyTimeSlots  />} />
+
+       
 
 
 

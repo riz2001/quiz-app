@@ -13,6 +13,7 @@ const WeekSubmissions = () => {
         const response = await axios.get(`http://localhost:5050/api/submissions/${week}`);
         setSubmissions(response.data);
       } catch (error) {
+        console.error('Error fetching submissions:', error);
         setError('Error fetching submissions');
       }
     };
@@ -22,6 +23,10 @@ const WeekSubmissions = () => {
 
   if (error) {
     return <div className="error">{error}</div>;
+  }
+
+  if (!submissions.length) {
+    return <div>No submissions available for this week.</div>;
   }
 
   return (
@@ -41,9 +46,9 @@ const WeekSubmissions = () => {
         <tbody>
           {submissions.map((submission) => (
             <tr key={submission._id}>
-              <td>{submission.userId.name}</td>
-              <td>{submission.userId.admissionno}</td>
-              <td>{submission.userId.email}</td>
+              <td>{submission.userId ? submission.userId.name : 'Unknown User'}</td> {/* Check for null */}
+              <td>{submission.userId ? submission.userId.admissionno : 'N/A'}</td> {/* Check for null */}
+              <td>{submission.userId ? submission.userId.email : 'N/A'}</td> {/* Check for null */}
               <td>{submission.score}</td>
               <td>{new Date(submission.submissionTime).toLocaleString()}</td>
               <td>
