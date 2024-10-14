@@ -1,8 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Global Styles
 const GlobalStyle = createGlobalStyle`
@@ -51,8 +50,6 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
-
-
 const Button = styled.button`
   width: 100%;
   padding: 0.75rem;
@@ -81,81 +78,69 @@ const SecondarButton = styled(Button)`
 // Ureg Component
 const Reg = () => {
   const navigate = useNavigate(); 
-  const navigate1 = useNavigate(); 
-  const [input, setInput] = new useState({
-    "name": "",
-    "admissionno": "",
-    "phoneno": "",
-    "email": "",
-    "password": "",
-    "cnfpass": ""
-  })
+  const [input, setInput] = useState({
+    name: "",
+    admissionno: "",
+    phoneno: "",
+    rollno: "", // New rollno field
+    semester: "", // New semester field
+    email: "",
+    password: "",
+    cnfpass: ""
+  });
 
   const inputHandler = (event) => {
-    setInput({ ...input, [event.target.name]: event.target.value })
-  }
+    setInput({ ...input, [event.target.name]: event.target.value });
+  };
 
   const readvalue = () => {
-    if (input.password == input.cnfpass) {
-
+    if (input.password === input.cnfpass) {
       let newinput = {
-        "name": input.name,
-        "admissionno": input.admissionno,
-        "phoneno": input.phoneno,
-        "email": input.email,
-        "password": input.password
-      }
+        name: input.name,
+        admissionno: input.admissionno,
+        phoneno: input.phoneno,
+        rollno: input.rollno, // Include rollno
+        semester: input.semester, // Include semester
+        email: input.email,
+        password: input.password
+      };
+      
       axios.post("http://localhost:5050/signup", newinput).then(
         (response) => {
-          console.log(response.data)
-          if (response.data.status == "success") {
-            alert("registered successfully")
+          console.log(response.data);
+          if (response.data.status === "success") {
+            alert("Registered successfully");
+            // Reset input fields
             setInput({
-              "name": input.name,
-              "admissionno": input.admissionno,
-              "phoneno": input.phoneno,
-              "email": input.email,
-              "password": input.password
-            })
-
-
-          } else {
-            alert("email id alread exist")
-            setInput({
-              "name": input.name,
-              "admissionno": input.admissionno,
-              "phoneno": input.phoneno,
-              "email": input.email,
-              "password": input.password
-            })
-
+              name: "",
+              admissionno: "",
+              phoneno: "",
+              rollno: "",
+              semester: "", // Reset semester
+              email: "",
+              password: "",
+              cnfpass: ""
+            });
+          } else if (response.data.status === "email id already exists") {
+            alert("Email ID already exists.");
           }
-
         }
-      ).catch(
-        (error) => {
-          console.log(error)
-        }
-      )
+      ).catch((error) => {
+        console.log(error);
+        alert("An error occurred during registration. Please try again.");
+      });
     } else {
-      alert("password and confirm no match")
+      alert("Password and confirm password do not match");
     }
-  }
-
-
-
-
-
-
+  };
 
   return (
     <div>
-
       <GlobalStyle />
       <FormContainer>
         <FormWrapper>
           <Title>Sign Up</Title>
-          <form >
+          <form>
             <Input
               type="text"
               name="name"
@@ -169,6 +154,22 @@ const Reg = () => {
               name="admissionno"
               placeholder="Admission Number"
               value={input.admissionno}
+              onChange={inputHandler}
+              required
+            />
+            <Input
+              type="text"
+              name="semester" // Semester input
+              placeholder="Semester"
+              value={input.semester}
+              onChange={inputHandler}
+              required
+            />
+            <Input
+              type="text"
+              name="rollno" // Roll number input
+              placeholder="Roll Number(Enter Batch_Rollno)"
+              value={input.rollno}
               onChange={inputHandler}
               required
             />
@@ -205,8 +206,8 @@ const Reg = () => {
               onChange={inputHandler}
               required
               autoComplete="new-password" />
-            <Button onClick={readvalue} >Sign Up</Button>
-            <SecondarButton onClick={() => navigate1('/')}>BACK TO SIGNIN</SecondarButton>
+            <Button onClick={readvalue}>Sign Up</Button>
+            <SecondarButton onClick={() => navigate('/')}>BACK TO SIGNIN</SecondarButton>
           </form>
         </FormWrapper>
       </FormContainer>
