@@ -5,6 +5,7 @@ import axios from 'axios';
 function Compiler() {
     const { week } = useParams(); // Get week from the URL
     const [questions, setQuestions] = useState([]);
+    const [dueDate, setDueDate] = useState(''); // New state for due date
     const [code, setCode] = useState('');
     const [language, setLanguage] = useState('python');
     const [output, setOutput] = useState('');
@@ -20,6 +21,11 @@ function Compiler() {
             try {
                 const res = await axios.get(`http://localhost:5050/api/cquestions/week/${week}`);
                 setQuestions(res.data);
+
+                // Assuming the due date is included in the question object
+                if (res.data.length > 0) {
+                    setDueDate(res.data[0].dueDate); // Adjust based on your data structure
+                }
             } catch (err) {
                 console.error('Error fetching questions for the week', err);
             }
@@ -139,6 +145,7 @@ function Compiler() {
             passedCount,
             totalTestCases: selectedQuestion.testCases.length,
             testResults: testResult,
+            dueDate: selectedQuestion.dueDate, // Pass the due date
         };
     
         try {
@@ -148,12 +155,9 @@ function Compiler() {
                 },
             });
             console.log('Submission Response:', res.data);
-            alert('Submission recorded successfully!'); 
-            // Optionally, clear the code and results after a successful submission
-            // resetForm();
+            alert('Submission recorded successfully!');
         } catch (error) {
             console.error('Error submitting the solution:', error);
-            // Check if the error response indicates a duplicate submission
             if (error.response && error.response.status === 400 && error.response.data.error) {
                 alert(error.response.data.error); // Show the error message from the backend
             } else {
@@ -162,9 +166,16 @@ function Compiler() {
         }
     };
     
+    
     return (
         <div style={styles.app}>
             <h1 style={styles.title}>Online Compiler</h1>
+
+            {dueDate && (
+                <div style={styles.dueDateContainer}>
+                    <strong>Due Date: {new Date(dueDate).toLocaleDateString()}</strong>
+                </div>
+            )}
 
             {questions.length > 0 && (
                 <div style={styles.questionsList}>
@@ -266,6 +277,7 @@ const styles = {
         padding: '20px',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        position: 'relative', // Important for positioning due date
     },
     title: {
         fontSize: '2.5em',
@@ -273,35 +285,13 @@ const styles = {
         marginBottom: '20px',
         color: '#343a40',
     },
-    inputContainer: {
-        marginBottom: '20px',
-    },
-    label: {
+    dueDateContainer: {
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
         fontWeight: 'bold',
-        marginBottom: '5px',
-    },
-    select: {
-        padding: '10px',
-        fontSize: '1em',
-        width: '100%',
-        border: '1px solid #ced4da',
-        borderRadius: '5px',
-    },
-    codeEditor: {
-        width: '100%',
-        padding: '10px',
-        fontSize: '1em',
-        border: '1px solid #ced4da',
-        borderRadius: '5px',
-    },
-    runButton: {
-        backgroundColor: '#28a745',
-        color: 'white',
-        padding: '10px 20px',
         fontSize: '1.2em',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
+        color: '#343a40',
     },
     questionsList: {
         marginBottom: '20px',
@@ -311,39 +301,74 @@ const styles = {
         padding: 0,
     },
     questionItem: {
-        backgroundColor: '#e9ecef',
-        marginBottom: '10px',
-        padding: '15px',
+        padding: '10px',
+        margin: '10px 0',
+        border: '1px solid #ddd',
         borderRadius: '5px',
         cursor: 'pointer',
-        transition: 'background-color 0.3s',
+        transition: 'background 0.3s',
     },
-    results: {
-        marginTop: '20px',
-    },
-    testPassed: {
-        backgroundColor: '#d4edda',
-        padding: '10px',
-        borderRadius: '5px',
-        marginBottom: '10px',
-    },
-    testFailed: {
-        backgroundColor: '#f8d7da',
-        padding: '10px',
-        borderRadius: '5px',
-        marginBottom: '10px',
+    questionItemHover: {
+        background: '#f1f1f1',
     },
     formatText: {
-        color: '#6c757d',
+        margin: '5px 0',
     },
-    loadButton: {
-        backgroundColor: '#007bff',
-        color: 'white',
+    form: {
+        marginTop: '20px',
+    },
+    inputContainer: {
+        marginBottom: '10px',
+    },
+    label: {
+        display: 'block',
+        fontWeight: 'bold',
+        marginBottom: '5px',
+    },
+    select: {
+        width: '100%',
+        padding: '8px',
+        fontSize: '16px',
+    },
+    codeEditor: {
+        width: '100%',
+        padding: '8px',
+        fontSize: '16px',
+        border: '1px solid #ccc',
+        borderRadius: '5px',
+        resize: 'vertical',
+    },
+    runButton: {
         padding: '10px 20px',
-        fontSize: '1.2em',
+        fontSize: '16px',
+        background: '#28a745',
+        color: '#fff',
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
-        marginTop: '10px',
+        transition: 'background 0.3s',
+    },
+    results: {
+        marginTop: '20px',
+        background: '#f8f9fa',
+        padding: '10px',
+        borderRadius: '5px',
+        border: '1px solid #ddd',
+    },
+    testPassed: {
+        color: 'green',
+    },
+    testFailed: {
+        color: 'red',
+    },
+    loadButton: {
+        padding: '10px 20px',
+        fontSize: '16px',
+        background: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        transition: 'background 0.3s',
     },
 };

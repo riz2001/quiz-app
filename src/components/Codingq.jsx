@@ -1,7 +1,6 @@
 // src/CodingQuestions.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-// You can use the same CSS as before
 
 const Codingq = () => {
     // Question submission form state
@@ -12,7 +11,8 @@ const Codingq = () => {
         outputFormat: '',
         testCases: [{ input: '', expectedOutput: '' }],
         difficulty: '',
-        week: ''
+        week: '',
+        dueDate: '' // Add due date to state
     });
 
     const [questionSubmitStatus, setQuestionSubmitStatus] = useState(null);
@@ -115,6 +115,16 @@ const Codingq = () => {
                     value={question.week} 
                     onChange={handleQuestionChange} 
                     required 
+                />
+
+                {/* Add Due Date Field */}
+                <input
+                    type="date"
+                    name="dueDate"
+                    placeholder="Due Date"
+                    value={question.dueDate}
+                    onChange={handleQuestionChange}
+                    required
                 />
 
                 <button type="submit">Submit Question</button>

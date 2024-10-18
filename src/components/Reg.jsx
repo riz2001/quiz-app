@@ -50,6 +50,15 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
+const Select = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
+
 const Button = styled.button`
   width: 100%;
   padding: 0.75rem;
@@ -75,15 +84,15 @@ const SecondarButton = styled(Button)`
   }
 `;
 
-// Ureg Component
+// Reg Component
 const Reg = () => {
   const navigate = useNavigate(); 
   const [input, setInput] = useState({
     name: "",
     admissionno: "",
     phoneno: "",
-    rollno: "", // New rollno field
-    semester: "", // New semester field
+    rollno: "",
+    courseYear: "", // Changed from semester to courseYear
     email: "",
     password: "",
     cnfpass: ""
@@ -99,8 +108,8 @@ const Reg = () => {
         name: input.name,
         admissionno: input.admissionno,
         phoneno: input.phoneno,
-        rollno: input.rollno, // Include rollno
-        semester: input.semester, // Include semester
+        rollno: input.rollno,
+        courseYear: input.courseYear, // Include courseYear in the submission
         email: input.email,
         password: input.password
       };
@@ -116,7 +125,7 @@ const Reg = () => {
               admissionno: "",
               phoneno: "",
               rollno: "",
-              semester: "", // Reset semester
+              courseYear: "", // Reset courseYear
               email: "",
               password: "",
               cnfpass: ""
@@ -157,18 +166,22 @@ const Reg = () => {
               onChange={inputHandler}
               required
             />
-            <Input
-              type="text"
-              name="semester" // Semester input
-              placeholder="Semester"
-              value={input.semester}
+            <Select
+              name="courseYear"
+              value={input.courseYear}
               onChange={inputHandler}
               required
-            />
+            >
+              <option value="">Select Year/Batch</option>
+              <option value="First Year A Batch">First Year A Batch</option>
+              <option value="First Year B Batch">First Year B Batch</option>
+              <option value="Second Year A Batch">Second Year A Batch</option>
+              <option value="Second Year B Batch">Second Year B Batch</option>
+            </Select>
             <Input
               type="text"
-              name="rollno" // Roll number input
-              placeholder="Roll Number(Enter Batch_Rollno)"
+              name="rollno"
+              placeholder="Roll Number"
               value={input.rollno}
               onChange={inputHandler}
               required
@@ -196,7 +209,7 @@ const Reg = () => {
               value={input.password}
               onChange={inputHandler}
               required
-              autoComplete="new-password" // Added autoComplete attribute
+              autoComplete="new-password"
             />
             <Input
               type="password"
@@ -205,7 +218,8 @@ const Reg = () => {
               value={input.cnfpass}
               onChange={inputHandler}
               required
-              autoComplete="new-password" />
+              autoComplete="new-password"
+            />
             <Button onClick={readvalue}>Sign Up</Button>
             <SecondarButton onClick={() => navigate('/')}>BACK TO SIGNIN</SecondarButton>
           </form>

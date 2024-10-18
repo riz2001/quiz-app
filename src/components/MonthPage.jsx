@@ -22,26 +22,35 @@ const styles = {
     border: '1px solid #ddd',
     borderRadius: '5px',
   },
-  attendedButton: {
+  statusButton: {
     padding: '8px 12px',
     backgroundColor: '#28a745',
     color: '#fff',
     border: 'none',
     cursor: 'pointer',
     borderRadius: '5px',
+    marginRight: '10px',
+  },
+  notAttendedButton: {
+    padding: '8px 12px',
+    backgroundColor: '#dc3545',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: '5px',
+    marginRight: '10px',
   },
 };
 
 const MonthPage = () => {
-  const [months, setMonths] = useState([]); // To store unique months
+  const [months, setMonths] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [timeSlots, setTimeSlots] = useState([]);
 
   useEffect(() => {
-    // Fetch unique months (you can customize this to suit your logic)
     const fetchMonths = async () => {
       try {
-        const response = await axios.get('http://localhost:5050/api/months'); // Endpoint to get unique months
+        const response = await axios.get('http://localhost:5050/api/months');
         setMonths(response.data);
       } catch (error) {
         console.error('Error fetching months:', error);
@@ -55,21 +64,30 @@ const MonthPage = () => {
     setSelectedMonth(month);
     try {
       const response = await axios.get(`http://localhost:5050/api/timeslots/${month}`);
-      setTimeSlots(response.data); // Set the timeSlots state with the response data
+      console.log(response.data); // Log the response to see the fetched time slots
+      setTimeSlots(response.data); // Assuming status is included in the response
     } catch (error) {
       console.error('Error fetching time slots:', error);
     }
   };
 
-  const markAsAttended = async (userId, slotId) => {
-    try {
-      const response = await axios.post(`http://localhost:5050/api/markattended`, { userId, slotId });
-      alert(response.data.message);
-      fetchTimeSlots(selectedMonth); // Refresh the time slots after marking
-    } catch (error) {
-      console.error('Error marking as attended:', error);
-      alert(error.response.data.message || 'Error marking as attended');
-    }
+  const updateStatus = (userId, slotId, status) => {
+    // Update the status locally in timeSlots
+    setTimeSlots((prevSlots) =>
+      prevSlots.map((slot) =>
+        slot._id === slotId ? { ...slot, status } : slot
+      )
+    );
+
+    // Make the API call to update the status in the database
+    axios.post('http://localhost:5050/api/updatestatus', { userId, slotId, status })
+      .then((response) => {
+        alert(response.data.message);
+      })
+      .catch((error) => {
+        console.error(`Error updating status to ${status}:`, error);
+        alert(error.response?.data?.message || `Error updating status to ${status}`);
+      });
   };
 
   return (
@@ -94,12 +112,29 @@ const MonthPage = () => {
                 <div><strong>Admission No:</strong> {slot.admissionno}</div>
                 <div><strong>Time Slot:</strong> {slot.timeSlot}</div>
                 <div><strong>Date:</strong> {new Date(slot.date).toLocaleDateString()}</div>
+                
+                {/* Displaying the current status */}
+                <div>
+                  <strong>Status:</strong> 
+                  {slot.status === 'attended' ? 'Attended' 
+                   : slot.status === 'not attended' ? 'Not Attended' 
+                   : 'Pending'}
+                </div>
+
                 <button
-                  style={styles.attendedButton}
-                  onClick={() => markAsAttended(slot.userId, slot._id)}
-                  disabled={slot.attended} // Disable if already attended
+                  style={styles.statusButton}
+                  onClick={() => updateStatus(slot.userId, slot._id, 'attended')}
+                  disabled={slot.status === 'attended'}
                 >
-                  {slot.attended ? 'Attended' : 'Mark as Attended'}
+                  Mark as Attended
+                </button>
+
+                <button
+                  style={styles.notAttendedButton}
+                  onClick={() => updateStatus(slot.userId, slot._id, 'not attended')}
+                  disabled={slot.status === 'not attended'}
+                >
+                  Mark as Not Attended
                 </button>
               </div>
             ))

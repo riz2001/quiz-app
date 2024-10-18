@@ -40,7 +40,8 @@ const Usertimeslots = () => {
             <tr>
               <th style={styles.th}>Time Slot</th>
               <th style={styles.th}>Date</th>
-              <th style={styles.th}>Meeting Link</th> {/* New column for Meeting Link */}
+              <th style={styles.th}>Meeting Link</th>
+              <th style={styles.th}>Status</th> {/* Column for Status */}
             </tr>
           </thead>
           <tbody>
@@ -57,6 +58,7 @@ const Usertimeslots = () => {
                     'No meeting link provided'
                   )}
                 </td>
+                <td style={styles.td}>{slot.status.charAt(0).toUpperCase() + slot.status.slice(1).replace(/_/g, ' ')}</td> {/* Show Status */}
               </tr>
             ))}
           </tbody>
